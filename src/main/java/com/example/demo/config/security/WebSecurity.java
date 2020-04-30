@@ -23,15 +23,13 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        var filter = new UsernamePasswordAuthenticationFilter();
-        filter.setAuthenticationManager(this.authenticationManager());
         http
         .csrf().disable()
         .authorizeRequests()
             .antMatchers("/hello", "/login").permitAll()
             .anyRequest().authenticated()
             .and()
-        .addFilter(filter);
+        .addFilter(new CustomFilter(this.authenticationManager()));
     }
 
 }
