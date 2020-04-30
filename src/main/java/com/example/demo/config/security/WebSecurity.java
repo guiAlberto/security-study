@@ -7,6 +7,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @EnableWebSecurity
 public class WebSecurity extends WebSecurityConfigurerAdapter {
@@ -22,14 +23,15 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        var filter = new UsernamePasswordAuthenticationFilter();
+        filter.setAuthenticationManager(this.authenticationManager());
         http
-        .csrf()
-        .disable()
+        .csrf().disable()
         .authorizeRequests()
-        .antMatchers("/hello")
-        .permitAll()
-        .anyRequest()
-        .authenticated();
+            .antMatchers("/hello", "/login").permitAll()
+            .anyRequest().authenticated()
+            .and()
+        .addFilter(filter);
     }
 
 }
